@@ -79,12 +79,18 @@
 
 
 
-<meta property="og:type" content="website">
-<meta property="og:title" content="Hexo">
-<meta property="og:url" content="http://yoursite.com/index.html">
+<meta name="description" content="#一、确定问题本文围绕着这样一个问题展开：如何从进程A传两个整数给进程B，进程B把两个数相加后返回结果给进程A。 #二、Binder机制框架概览Android给我们提供了跨进程通信的一揽子解决方案。下面我们从总体上看一看这个方案是怎样设计的：进程A通过bindService方法去绑定在进程B中注册的一个service，系统收到进程A的bindService请求后，会调用进程B中相应service的">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Binder">
+<meta property="og:url" content="http://yoursite.com/2018/03/05/Binder/index.html">
 <meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="#一、确定问题本文围绕着这样一个问题展开：如何从进程A传两个整数给进程B，进程B把两个数相加后返回结果给进程A。 #二、Binder机制框架概览Android给我们提供了跨进程通信的一揽子解决方案。下面我们从总体上看一看这个方案是怎样设计的：进程A通过bindService方法去绑定在进程B中注册的一个service，系统收到进程A的bindService请求后，会调用进程B中相应service的">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/9223820-df8ba38df316e748.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:updated_time" content="2018-03-05T02:42:38.658Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Hexo">
+<meta name="twitter:title" content="Binder">
+<meta name="twitter:description" content="#一、确定问题本文围绕着这样一个问题展开：如何从进程A传两个整数给进程B，进程B把两个数相加后返回结果给进程A。 #二、Binder机制框架概览Android给我们提供了跨进程通信的一揽子解决方案。下面我们从总体上看一看这个方案是怎样设计的：进程A通过bindService方法去绑定在进程B中注册的一个service，系统收到进程A的bindService请求后，会调用进程B中相应service的">
+<meta name="twitter:image" content="http://upload-images.jianshu.io/upload_images/9223820-df8ba38df316e748.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
 
 
 
@@ -114,13 +120,13 @@
 
 
 
-  <link rel="canonical" href="http://yoursite.com/"/>
+  <link rel="canonical" href="http://yoursite.com/2018/03/05/Binder/"/>
 
 
 
 
 
-  <title>Hexo</title>
+  <title>Binder | Hexo</title>
   
 
 
@@ -139,8 +145,7 @@
     
   
 
-  <div class="container sidebar-position-left 
-  page-home">
+  <div class="container sidebar-position-left page-post-detail">
     <div class="headband"></div>
 
     <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
@@ -213,9 +218,9 @@
         <div class="content-wrap">
           <div id="content" class="content">
             
-  <section id="posts" class="posts-expand">
+
+  <div id="posts" class="posts-expand">
     
-      
 
   
 
@@ -245,9 +250,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2018/03/05/Binder/" itemprop="url">Binder</a></h1>
+          <h1 class="post-title" itemprop="name headline">Binder</h1>
         
 
         <div class="post-meta">
@@ -297,9 +300,7 @@
       
 
       
-        
-          
-            <p>#一、确定问题<br>本文围绕着这样一个问题展开：如何从进程A传两个整数给进程B，进程B把两个数相加后返回结果给进程A。</p>
+        <p>#一、确定问题<br>本文围绕着这样一个问题展开：如何从进程A传两个整数给进程B，进程B把两个数相加后返回结果给进程A。</p>
 <p>#二、Binder机制框架概览<br><code>Android</code>给我们提供了跨进程通信的一揽子解决方案。下面我们从总体上看一看这个方案是怎样设计的：<br>进程A通过<code>bindService</code>方法去绑定在进程B中注册的一个<code>service</code>，系统收到进程A的<code>bindService</code>请求后，会调用进程B中相应<code>service</code>的<code>onBind</code>方法，该方法返回一个特殊对象，系统会接收到这个特殊对象，然后为这个特殊对象生成一个代理对象，再将这个代理对象返回给进程A，进程A在<code>ServiceConnection</code>回调的<code>onServiceConnected</code>方法中接收该代理对象，依靠这个代理对象的帮助，就可以解决我们的问题啦。</p>
 <p>#三、分步骤分析</p>
 <p>##step 1： 进程B创建Binder对象<br>为进程B实现一个特殊的对象，就是前面提到的<code>service</code>的<code>onBind</code>方法要返回的对象。这个对象有两个特性：</p>
@@ -324,8 +325,6 @@
 <p><strong>总结</strong>：进程A向进程B申请<code>Stub</code>类（继承自<code>Binder</code>）的对象<code>binder</code>,想从<code>binder</code>中获得<code>IPlus</code>接口类型的对象<code>plus</code>，以便利用<code>plus</code>中的<code>add</code>方法做加法计算。当进程A发现收到的不是<code>binder</code>真身而是它的代理<code>binderproxy</code>时，它在自己进程内构建了一个<code>plus</code>的代理对象<code>plusproxy</code>（类型为<code>PlusProxy</code>，实现了与plus相同的的IPlus接口），该代理对象的add方法利用<code>binderproxy</code>去向<code>binder</code>申请加法计算，并把结果返回。这样，从外表上来看，进程A获得了进程B中的<code>plus</code>对象，这就是<code>Binder</code>跨进程通信的本质。<br>如果你理解了本文的思想，再去看<code>aidl</code>生成的代码，就一定会觉得很简单的。 </p>
 <p>具体的交互可以总结成下图:<br><img src="http://upload-images.jianshu.io/upload_images/9223820-df8ba38df316e748.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="Binder.png"></p>
 
-          
-        
       
     </div>
     
@@ -342,12 +341,12 @@
       
 
       
+      
+      
 
       
 
       
-      
-        <div class="post-eof"></div>
       
     </footer>
   </div>
@@ -357,10 +356,11 @@
   </article>
 
 
-    
-  </section>
 
-  
+    <div class="post-spread">
+      
+    </div>
+  </div>
 
 
           </div>
@@ -368,6 +368,10 @@
 
 
           
+
+  
+
+
 
         </div>
         
@@ -564,6 +568,10 @@
   
 
   
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
 
   
 
